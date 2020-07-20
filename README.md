@@ -1,4 +1,4 @@
-# InstagramApp
+# Fishta - instagram clone.
 
 <br><b>I have deleted google-services.json. Add yours</b>
 
