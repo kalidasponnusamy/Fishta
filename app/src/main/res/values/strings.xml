@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">Fishta</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="about_point1">Fishta offering personalized opportunities to create, connect, communicate, discover and share.</string>
+    <string name="about_point2">Developing and using technologies that help us consistently serve our growing aquarium fish community.</string>
+    <string name="about_point3">Ensuring a stable global infrastructure for our Service</string>
+    <string name="package_name">com.vedhafishfarm.fishtaapp</string>
+
+    <string name="privacy_policy_link"><u>Privacy Policy</u> </string>
+
+    <string-array name="report_reason">
+        <item>I just dont like it</item>
+        <item>Hate Speech or symbols</item>
+        <item>Bullying or harassment</item>
+        <item>Scam or Fraud</item>
+        <item>Copyright Content</item>
+        <item>False information</item>
+        <item>Sale of Illegal or regulated goods</item>
+        <item>Nudity or sexual activity</item>
+
+    </string-array>
+
+    <string name="fishta">
+    <a href="https://vedhafishfarm.com">Check Out Our Website Here</a>
+</string>
+</resources>
