@@ -11,12 +11,15 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.google.firebase.database.FirebaseDatabase;
+
 public class SplashActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
         setStatusBarColor(findViewById(R.id.statusBarBackground), getResources().getColor(R.color.white));
 

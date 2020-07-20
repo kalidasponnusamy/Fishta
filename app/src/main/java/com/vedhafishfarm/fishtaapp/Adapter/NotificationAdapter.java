@@ -58,14 +58,14 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         holder.text.setText(notification.getText());
 
 
-        getUserInfo(holder.image_profile, holder.username, notification.getUserid() );
+        getUserInfo(holder.image_profile, holder.username, notification.getUserid());
 
-        if (notification.isIspost()) {
-            holder.post_image.setVisibility(View.VISIBLE);
-            getPostImage(holder.post_image, notification.getPostid());
-        } else {
-            holder.post_image.setVisibility(View.GONE);
-        }
+//        if (notification.isIspost()) {
+//            holder.post_image.setVisibility(View.VISIBLE);
+//            getPostImage(holder.post_image, notification.getPostid());
+//        } else {
+//            holder.post_image.setVisibility(View.GONE);
+//        }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,7 +75,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                     editor.putString("postid", notification.getPostid());
                     editor.apply();
 
-                    ((FragmentActivity)mContext).getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                    ((FragmentActivity) mContext).getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                             new PostDetailFragment()).commit();
                 } else {
                     SharedPreferences.Editor editor = mContext.getSharedPreferences("PREFS", MODE_PRIVATE).edit();
@@ -97,25 +97,10 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         return mNotification.size();
     }
 
-    public class ImageViewHolder extends RecyclerView.ViewHolder {
-
-        public ImageView image_profile, post_image;
-        public TextView username, text;
-
-        public ImageViewHolder(View itemView) {
-            super(itemView);
-
-            image_profile = itemView.findViewById(R.id.image_profile);
-            post_image = itemView.findViewById(R.id.post_image);
-            username = itemView.findViewById(R.id.username);
-            text = itemView.findViewById(R.id.comment);
-        }
-    }
-
     private void getUserInfo(final ImageView imageView, final TextView username, String publisherid){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
                 .child("Users").child(publisherid);
-
+        reference.keepSynced(true);
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -135,7 +120,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     private void getPostImage(final ImageView post_image, String postid){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
                 .child("Posts").child(postid);
-
+        reference.keepSynced(true);
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -164,6 +149,21 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
             }
         });
+    }
+
+    public class ImageViewHolder extends RecyclerView.ViewHolder {
+
+        public ImageView image_profile, post_image;
+        public TextView username, text;
+
+        public ImageViewHolder(View itemView) {
+            super(itemView);
+
+            image_profile = itemView.findViewById(R.id.image_profile);
+            //post_image = itemView.findViewById(R.id.post_image);
+            username = itemView.findViewById(R.id.username);
+            text = itemView.findViewById(R.id.comment);
+        }
     }
 
 }

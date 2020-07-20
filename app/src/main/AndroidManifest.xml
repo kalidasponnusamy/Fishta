@@ -26,6 +26,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".SplashActivity"
+            android:allowBackup="true"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -47,6 +48,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".MainActivity"
+            android:allowBackup="true"
             android:screenOrientation="portrait" />
         <activity android:name=".PostActivity" />
         <activity
@@ -54,6 +56,7 @@
             android:theme="@style/Base.Theme.AppCompat" />
         <activity
             android:name=".CommentsActivity"
+            android:allowBackup="true"
             android:screenOrientation="portrait" />
         <activity
             android:name=".OptionsActivity"
@@ -63,9 +66,11 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".FollowersActivity"
+            android:allowBackup="true"
             android:screenOrientation="portrait" />
         <activity
             android:name=".StoryActivity"
+            android:allowBackup="true"
             android:screenOrientation="portrait" />
         <activity
             android:name=".AddStoryActivity"

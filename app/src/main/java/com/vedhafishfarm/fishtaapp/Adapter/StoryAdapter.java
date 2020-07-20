@@ -114,6 +114,7 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.ViewHolder>{
 
     private void userInfo(final ViewHolder viewHolder, String userid, final int pos){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(userid);
+        reference.keepSynced(true);
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -151,14 +152,15 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.ViewHolder>{
     private void myStory(final TextView textView, final ImageView imageView, final boolean click){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Story")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        reference.keepSynced(true);
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 int count = 0;
                 long timecurrent = System.currentTimeMillis();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Story story = snapshot.getValue(Story.class);
-                    if (timecurrent > story.getTimestart() && timecurrent < story.getTimeend()){
+                    if (timecurrent > story.getTimestart() && timecurrent < story.getTimeend()) {
                         count++;
                     }
                 }
@@ -210,14 +212,15 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.ViewHolder>{
     private void seenStory(final ViewHolder viewHolder, String userid){
         DatabaseReference reference  = FirebaseDatabase.getInstance().getReference("Story")
                 .child(userid);
+        reference.keepSynced(true);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 int i = 0;
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     if (!snapshot.child("views")
                             .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                            .exists() && System.currentTimeMillis() < snapshot.getValue(Story.class).getTimeend()){
+                            .exists() && System.currentTimeMillis() < snapshot.getValue(Story.class).getTimeend()) {
                         i++;
                     }
                 }

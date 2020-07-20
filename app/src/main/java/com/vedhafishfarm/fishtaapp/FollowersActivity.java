@@ -26,9 +26,9 @@ public class FollowersActivity extends AppCompatActivity {
 
     private List<String> idList;
 
-    RecyclerView recyclerView;
-    UserAdapter userAdapter;
-    List<User> userList;
+    private RecyclerView recyclerView;
+    private UserAdapter userAdapter;
+    private List<User> userList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,11 +80,12 @@ public class FollowersActivity extends AppCompatActivity {
     private void getViews(){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Story")
                 .child(id).child(getIntent().getStringExtra("storyid")).child("views");
+        reference.keepSynced(true);
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 idList.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     idList.add(snapshot.getKey());
                 }
                 showUsers();
@@ -98,13 +99,14 @@ public class FollowersActivity extends AppCompatActivity {
     }
 
     private void getFollowers() {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Follow")
+        DatabaseReference FReference = FirebaseDatabase.getInstance().getReference("Follow")
                 .child(id).child("followers");
-        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+        FReference.keepSynced(true);
+        FReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 idList.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     idList.add(snapshot.getKey());
                 }
                 showUsers();
@@ -118,13 +120,14 @@ public class FollowersActivity extends AppCompatActivity {
     }
 
     private void getFollowing() {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Follow")
+        DatabaseReference FlReference = FirebaseDatabase.getInstance().getReference("Follow")
                 .child(id).child("following");
-        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+        FlReference.keepSynced(true);
+        FlReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 idList.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     idList.add(snapshot.getKey());
                 }
                 showUsers();
@@ -140,11 +143,12 @@ public class FollowersActivity extends AppCompatActivity {
     private void getLikes() {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Likes")
                 .child(id);
+        reference.keepSynced(true);
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 idList.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     idList.add(snapshot.getKey());
                 }
                 showUsers();
@@ -158,15 +162,16 @@ public class FollowersActivity extends AppCompatActivity {
     }
 
     private void showUsers() {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
-        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+        DatabaseReference ShowReference = FirebaseDatabase.getInstance().getReference("Users");
+        ShowReference.keepSynced(true);
+        ShowReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 userList.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     User user = snapshot.getValue(User.class);
-                    for (String id : idList){
-                        if (user.getId().equals(id)){
+                    for (String id : idList) {
+                        if (user.getId() != null && user.getId().equals(id)) {
                             userList.add(user);
 //
                         }

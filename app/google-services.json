@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "982503239265",
-    "firebase_url": "https://fishta-38cb1.firebaseio.com",
-    "project_id": "fishta-38cb1",
-    "storage_bucket": "fishta-38cb1.appspot.com"
+    "project_number": "459431887821",
+    "firebase_url": "https://fishta-d96ca.firebaseio.com",
+    "project_id": "fishta-d96ca",
+    "storage_bucket": "fishta-d96ca.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:982503239265:android:4687e89b8cd07ea72e0420",
+        "mobilesdk_app_id": "1:459431887821:android:87f53597c3b1f8cdf33a84",
         "android_client_info": {
           "package_name": "com.vedhafishfarm.fishtaapp"
         }
       },
       "oauth_client": [
         {
-          "client_id": "982503239265-kdl5j83kt716d5652rn0ctpa42ihho8j.apps.googleusercontent.com",
+          "client_id": "459431887821-9e01bmhelorsm0lsn1p7f44clvkglb3q.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.vedhafishfarm.fishtaapp",
@@ -23,20 +23,20 @@
           }
         },
         {
-          "client_id": "982503239265-u49sljeov98kn2tqlr6t2tid7n0pgspu.apps.googleusercontent.com",
+          "client_id": "459431887821-20hkbi9806dcnl3fdpjbu4f8gqr85ian.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAwPQSEqfwKlE3DRd5jeOK9X_mCCiN7R9w"
+          "current_key": "AIzaSyA7cnhhAJSoGbUiLDe_n33nuqrJeATkQ4Q"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "982503239265-u49sljeov98kn2tqlr6t2tid7n0pgspu.apps.googleusercontent.com",
+              "client_id": "459431887821-20hkbi9806dcnl3fdpjbu4f8gqr85ian.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

@@ -6,7 +6,9 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -53,11 +55,15 @@ public class HomeFragment extends Fragment {
     ProgressBar progress_circular;
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-
-        //FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
         recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
@@ -96,21 +102,21 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getActivity(), "Share app", Toast.LENGTH_SHORT).show();
-                Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.fishta_whatsapp_share);
+                Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.fishta_whatsapp_share);
                 try {
-                    File file = new File(getActivity().getExternalCacheDir(),"fishta_whatsapp_share.png");
+                    File file = new File(getActivity().getExternalCacheDir(), "fishta_whatsapp_share.png");
                     FileOutputStream fOut = new FileOutputStream(file);
-                    bitmap.compress(Bitmap.CompressFormat.PNG,80,fOut);
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 80, fOut);
                     fOut.flush();
                     fOut.close();
-                    file.setReadable(true,false);
+                    file.setReadable(true, false);
 
                     Intent intent = new Intent(Intent.ACTION_SEND);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
                     intent.setType("image/png");
                     intent.setType("text/plain");
-                    String shareBody = "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID +"\n\n";
+                    String shareBody = "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID + "\n\n";
                     intent.putExtra(Intent.EXTRA_SUBJECT, shareBody);
                     intent.putExtra(Intent.EXTRA_TEXT, shareBody);
                     startActivity(Intent.createChooser(intent, "Share Fishta"));
@@ -119,20 +125,20 @@ public class HomeFragment extends Fragment {
                     Toast.makeText(getActivity(), "File not found", Toast.LENGTH_SHORT).show();
                 } catch (IOException e) {
                     e.printStackTrace();
-                } catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         });
 
         checkFollowing();
-
         return view;
+
+
     }
 
 
-
-    private void checkFollowing(){
+    private void checkFollowing() {
         followingList = new ArrayList<>();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Follow")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -143,7 +149,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 followingList.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     followingList.add(snapshot.getKey());
                 }
 
@@ -158,7 +164,7 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void readPosts(){
+    private void readPosts() {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
         reference.keepSynced(true);
 
@@ -166,10 +172,10 @@ public class HomeFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 postList.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Post post = snapshot.getValue(Post.class);
-                    for (String id : followingList){
-                        if (post.getPublisher().equals(id)){
+                    for (String id : followingList) {
+                        if (post.getPublisher().equals(id)) {
                             postList.add(post);
                         }
                     }
@@ -186,7 +192,7 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void readStory(){
+    private void readStory() {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Story");
         reference.keepSynced(true);
         reference.addValueEventListener(new ValueEventListener() {
@@ -205,7 +211,7 @@ public class HomeFragment extends Fragment {
                             countStory++;
                         }
                     }
-                    if (countStory > 0){
+                    if (countStory > 0) {
                         storyList.add(story);
                     }
                 }

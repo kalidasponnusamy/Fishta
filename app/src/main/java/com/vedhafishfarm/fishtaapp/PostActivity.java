@@ -3,8 +3,10 @@ package com.vedhafishfarm.fishtaapp;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -27,6 +29,9 @@ import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 import com.theartofdev.edmodo.cropper.CropImage;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 
 public class PostActivity extends AppCompatActivity {
@@ -63,31 +68,99 @@ public class PostActivity extends AppCompatActivity {
         post.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                uploadImage_10();
+                try {
+                    uploadImage_10();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
 
         CropImage.activity()
-                .setAspectRatio(2,2)
+                .setAspectRatio(2, 2)
                 .start(PostActivity.this);
     }
 
-    private String getFileExtension(Uri uri){
+    private String getFileExtension(Uri uri) {
         ContentResolver cR = getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         return mime.getExtensionFromMimeType(cR.getType(uri));
     }
 
-    private void uploadImage_10(){
+//    private void uploadImage_10(){
+//        final ProgressDialog pd = new ProgressDialog(this);
+//        pd.setMessage("Posting");
+//        pd.show();
+//        if (mImageUri != null){
+//            final StorageReference fileReference = storageRef.child(System.currentTimeMillis()
+//                    + "." + getFileExtension(mImageUri));
+//
+//            uploadTask = fileReference.putFile(mImageUri);
+//            uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+//                @Override
+//                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+//                    if (!task.isSuccessful()) {
+//                        throw task.getException();
+//                    }
+//                    return fileReference.getDownloadUrl();
+//                }
+//            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+//                @Override
+//                public void onComplete(@NonNull Task<Uri> task) {
+//                    if (task.isSuccessful()) {
+//                        Uri downloadUri = task.getResult();
+//                        miUrlOk = downloadUri.toString();
+//
+//                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
+//
+//                        String postid = reference.push().getKey();
+//
+//                        HashMap<String, Object> hashMap = new HashMap<>();
+//                        hashMap.put("postid", postid);
+//                        hashMap.put("postimage", miUrlOk);
+//                        hashMap.put("description", description.getText().toString());
+//                        hashMap.put("publisher", FirebaseAuth.getInstance().getCurrentUser().getUid());
+//
+//                        reference.child(postid).setValue(hashMap);
+//
+//                        pd.dismiss();
+//
+//                        startActivity(new Intent(PostActivity.this, MainActivity.class));
+//                        finish();
+//
+//                    } else {
+//                        Toast.makeText(PostActivity.this, "Failed", Toast.LENGTH_SHORT).show();
+//                    }
+//                }
+//            }).addOnFailureListener(new OnFailureListener() {
+//                @Override
+//                public void onFailure(@NonNull Exception e) {
+//                    Toast.makeText(PostActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+//                }
+//            });
+//
+//        } else {
+//            Toast.makeText(PostActivity.this, "No image selected", Toast.LENGTH_SHORT).show();
+//        }
+//    }
+
+    private void uploadImage_10() throws IOException {
         final ProgressDialog pd = new ProgressDialog(this);
         pd.setMessage("Posting");
         pd.show();
-        if (mImageUri != null){
+
+
+        if (mImageUri != null) {
             final StorageReference fileReference = storageRef.child(System.currentTimeMillis()
                     + "." + getFileExtension(mImageUri));
 
-            uploadTask = fileReference.putFile(mImageUri);
+            Bitmap bmp = MediaStore.Images.Media.getBitmap(getContentResolver(), mImageUri);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bmp.compress(Bitmap.CompressFormat.JPEG, 25, baos);
+            byte[] data = baos.toByteArray();
+
+            uploadTask = fileReference.putBytes(data);
             uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                 @Override
                 public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {

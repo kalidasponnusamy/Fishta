@@ -47,7 +47,6 @@ import com.vedhafishfarm.fishtaapp.Notifications.Sender;
 import com.vedhafishfarm.fishtaapp.Notifications.Token;
 import com.vedhafishfarm.fishtaapp.OptionsActivity;
 import com.vedhafishfarm.fishtaapp.R;
-import com.vedhafishfarm.fishtaapp.SpacesItemDecoration;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -226,7 +225,7 @@ public class ProfileFragment extends Fragment  {
 
     private void addNotification(){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(profileid);
-
+        reference.keepSynced(true);
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("userid", firebaseUser.getUid());
         hashMap.put("text", "started following you");
@@ -237,7 +236,7 @@ public class ProfileFragment extends Fragment  {
 
         DatabaseReference PReference = FirebaseDatabase.getInstance().getReference()
                 .child("Users").child(firebaseUser.getUid());
-
+        PReference.keepSynced(true);
         PReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -254,10 +253,11 @@ public class ProfileFragment extends Fragment  {
         });
 
         DatabaseReference mreference = FirebaseDatabase.getInstance().getReference("Users").child(profileid);
+        mreference.keepSynced(true);
         mreference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (getContext() == null){
+                if (getContext() == null) {
                     return;
                 }
                 User user = dataSnapshot.getValue(User.class);
@@ -314,10 +314,11 @@ public class ProfileFragment extends Fragment  {
 
     private void userInfo(){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(profileid);
+        reference.keepSynced(true);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (getContext() == null){
+                if (getContext() == null) {
                     return;
                 }
                 User user = dataSnapshot.getValue(User.class);
@@ -339,12 +340,13 @@ public class ProfileFragment extends Fragment  {
     private void checkFollow(){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
                 .child("Follow").child(firebaseUser.getUid()).child("following");
+        reference.keepSynced(true);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.child(profileid).exists()){
+                if (dataSnapshot.child(profileid).exists()) {
                     edit_profile.setText("following");
-                } else{
+                } else {
                     edit_profile.setText("follow");
                 }
             }
@@ -358,11 +360,12 @@ public class ProfileFragment extends Fragment  {
 
     private void getFollowers(){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Follow").child(profileid).child("followers");
+        reference.keepSynced(true);
         reference.addValueEventListener(new ValueEventListener() {
             @SuppressLint("SetTextI18n")
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                followers.setText(""+ dataSnapshot.getChildrenCount());
+                followers.setText("" + dataSnapshot.getChildrenCount());
             }
 
             @Override
@@ -372,11 +375,12 @@ public class ProfileFragment extends Fragment  {
         });
 
         DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Follow").child(profileid).child("following");
+        reference1.keepSynced(true);
         reference1.addValueEventListener(new ValueEventListener() {
             @SuppressLint("SetTextI18n")
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                following.setText(""+dataSnapshot.getChildrenCount());
+                following.setText("" + dataSnapshot.getChildrenCount());
             }
 
             @Override
@@ -388,13 +392,14 @@ public class ProfileFragment extends Fragment  {
 
     private void getNrPosts(){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
+        reference.keepSynced(true);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 int i = 0;
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Post post = snapshot.getValue(Post.class);
-                    if (post.getPublisher().equals(profileid)){
+                    if (post.getPublisher().equals(profileid)) {
                         i++;
                     }
                 }
@@ -410,13 +415,14 @@ public class ProfileFragment extends Fragment  {
 
     private void myFotos(){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
+        reference.keepSynced(true);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 postList.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Post post = snapshot.getValue(Post.class);
-                    if (post.getPublisher().equals(profileid)){
+                    if (post.getPublisher().equals(profileid)) {
                         postList.add(post);
                     }
                 }
@@ -434,10 +440,11 @@ public class ProfileFragment extends Fragment  {
     private void mySaves(){
         mySaves = new ArrayList<>();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Saves").child(firebaseUser.getUid());
+        reference.keepSynced(true);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     mySaves.add(snapshot.getKey());
                 }
                 readSaves();
@@ -452,11 +459,12 @@ public class ProfileFragment extends Fragment  {
 
     private void readSaves(){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
+        reference.keepSynced(true);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 postList_saves.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Post post = snapshot.getValue(Post.class);
 
                     for (String id : mySaves) {
