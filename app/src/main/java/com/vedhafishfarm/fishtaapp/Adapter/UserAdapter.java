@@ -90,7 +90,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ImageViewHolde
                 .centerCrop()
                 .dontAnimate()
                 .dontTransform()
-                .override(50, 50)
+                .override(15, 15)
                 .placeholder(R.drawable.placeholder)
                 .priority(Priority.IMMEDIATE)
                 .encodeFormat(Bitmap.CompressFormat.PNG)

@@ -60,6 +60,11 @@ dependencies {
 
     implementation 'com.github.pedromassango:doubleClick:3.0'
 
+    implementation 'id.zelory:compressor:2.1.0'
+
+    //ads
+    implementation 'com.google.android.gms:play-services-ads:17.0.0'
+
 }
 
 apply plugin: 'com.google.gms.google-services'

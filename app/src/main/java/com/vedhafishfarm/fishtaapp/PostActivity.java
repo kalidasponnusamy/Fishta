@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -33,6 +34,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+
+import id.zelory.compressor.Compressor;
 
 public class PostActivity extends AppCompatActivity {
 
@@ -80,6 +83,8 @@ public class PostActivity extends AppCompatActivity {
         CropImage.activity()
                 .setAspectRatio(2, 2)
                 .start(PostActivity.this);
+
+
     }
 
     private String getFileExtension(Uri uri) {
@@ -155,11 +160,17 @@ public class PostActivity extends AppCompatActivity {
             final StorageReference fileReference = storageRef.child(System.currentTimeMillis()
                     + "." + getFileExtension(mImageUri));
 
-            Bitmap bmp = MediaStore.Images.Media.getBitmap(getContentResolver(), mImageUri);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bmp.compress(Bitmap.CompressFormat.JPEG, 25, baos);
-            byte[] data = baos.toByteArray();
 
+            File actualImage = new File(mImageUri.getPath());
+
+            Bitmap bmp = new Compressor(this)
+                    .setMaxWidth(500)
+                    .setMaxHeight(500)
+                    .setQuality(50)
+                    .compressToBitmap(actualImage);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bmp.compress(Bitmap.CompressFormat.WEBP, 50, baos);
+            byte[] data = baos.toByteArray();
             uploadTask = fileReference.putBytes(data);
             uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                 @Override

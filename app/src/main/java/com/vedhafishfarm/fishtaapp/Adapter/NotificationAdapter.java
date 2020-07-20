@@ -132,7 +132,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                         .centerCrop()
                         .dontAnimate()
                         .dontTransform()
-                        .override(50, 50)
+                        .override(10, 10)
                         .placeholder(R.drawable.placeholder)
                         .priority(Priority.IMMEDIATE)
                         .encodeFormat(Bitmap.CompressFormat.PNG)

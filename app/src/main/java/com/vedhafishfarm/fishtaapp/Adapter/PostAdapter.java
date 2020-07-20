@@ -114,7 +114,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
                 .centerCrop()
                 .dontAnimate()
                 .dontTransform()
-                .override(400, 400)
+                .override(500, 500)
                 .placeholder(R.drawable.placeholder)
                 .priority(Priority.IMMEDIATE)
                 .encodeFormat(Bitmap.CompressFormat.PNG)

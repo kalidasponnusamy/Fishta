@@ -41,8 +41,11 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+
+import id.zelory.compressor.Compressor;
 
 public class EditProfileActivity extends AppCompatActivity {
 
@@ -165,9 +168,15 @@ public class EditProfileActivity extends AppCompatActivity {
             final StorageReference fileReference = storageRef.child(System.currentTimeMillis()
                     + "." + getFileExtension(mImageUri));
 
-            Bitmap bmp = MediaStore.Images.Media.getBitmap(getContentResolver(), mImageUri);
+            File actualImage = new File(mImageUri.getPath());
+
+            Bitmap bmp = new Compressor(this)
+                    .setMaxWidth(500)
+                    .setMaxHeight(500)
+                    .setQuality(50)
+                    .compressToBitmap(actualImage);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bmp.compress(Bitmap.CompressFormat.JPEG, 50, baos);
+            bmp.compress(Bitmap.CompressFormat.WEBP, 50, baos);
             byte[] data = baos.toByteArray();
 
             uploadTask = fileReference.putBytes(data);
