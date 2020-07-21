@@ -15,7 +15,23 @@
       },
       "oauth_client": [
         {
-          "client_id": "459431887821-9e01bmhelorsm0lsn1p7f44clvkglb3q.apps.googleusercontent.com",
+          "client_id": "459431887821-nje7lp4m2tc5lg0g4j3cdb3pd9sqfiim.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vedhafishfarm.fishtaapp",
+            "certificate_hash": "994e86c04323508113d3de7a202a536c56088974"
+          }
+        },
+        {
+          "client_id": "459431887821-ckm6kr316tsum8kg4reiemnlgdnku6qu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vedhafishfarm.fishtaapp",
+            "certificate_hash": "ccb69facce6f94c3aff0f3b20de8c1d8f5d498de"
+          }
+        },
+        {
+          "client_id": "459431887821-vvussjq3q1uanrbhg93v04bcrbg4d7hb.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.vedhafishfarm.fishtaapp",

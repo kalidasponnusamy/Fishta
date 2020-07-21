@@ -5,9 +5,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
@@ -25,6 +27,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
+import com.bumptech.glide.load.DecodeFormat;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -96,9 +105,15 @@ public class ProfileFragment extends Fragment  {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        
+
         //Api Service
         apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
+
+
+        //AdMob
+//        AdView mAdView = view.findViewById(R.id.adView);
+//        AdRequest adRequest = new AdRequest.Builder().build();
+//        mAdView.loadAd(adRequest);
 
 
         SharedPreferences prefs = getContext().getSharedPreferences("PREFS", MODE_PRIVATE);
@@ -323,7 +338,22 @@ public class ProfileFragment extends Fragment  {
                 }
                 User user = dataSnapshot.getValue(User.class);
 
-                Glide.with(getContext()).load(user.getImageurl()).into(image_profile);
+                RequestOptions requestOptions = new RequestOptions()
+                        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                        .skipMemoryCache(true)
+                        .centerCrop()
+                        .dontAnimate()
+                        .dontTransform()
+                        .override(100, 100)
+                        .placeholder(R.drawable.placeholder)
+                        .priority(Priority.IMMEDIATE)
+                        .encodeFormat(Bitmap.CompressFormat.PNG)
+                        .format(DecodeFormat.DEFAULT);
+
+
+                Glide.with(getContext())
+                        .applyDefaultRequestOptions(requestOptions)
+                        .load(user.getImageurl()).into(image_profile);
                 username.setText(user.getUsername());
                 fullname.setText(user.getFullname());
                 bio.setText(user.getBio());

@@ -13,12 +13,14 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
+import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -26,6 +28,8 @@ import android.view.WindowManager;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
@@ -48,11 +52,59 @@ public class MainActivity extends AppCompatActivity {
     Fragment selectedfragment = null;
 
     private FirebaseAnalytics mFirebaseAnalytics;
+    private InterstitialAd mInterstitialAd;
+    private BottomNavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener =
+            new BottomNavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+                    switch (item.getItemId()) {
+                        case R.id.nav_home:
+                            selectedfragment = new HomeFragment();
+                            break;
+                        case R.id.nav_search:
+                            selectedfragment = new SearchFragment();
+
+                            break;
+                        case R.id.nav_add:
+                            selectedfragment = null;
+                            startActivity(new Intent(MainActivity.this, PostActivity.class));
+                            break;
+                        case R.id.nav_heart:
+                            selectedfragment = new NotificationFragment();
+                            if (mInterstitialAd.isLoaded()) {
+                                mInterstitialAd.show();
+                            } else {
+                                Log.d("TAG", "The interstitial wasn't loaded yet.");
+                            }
+                            break;
+                        case R.id.nav_profile:
+                            SharedPreferences.Editor editor = getSharedPreferences("PREFS", MODE_PRIVATE).edit();
+                            editor.putString("profileid", FirebaseAuth.getInstance().getCurrentUser().getUid());
+                            editor.apply();
+                            selectedfragment = new ProfileFragment();
+                            break;
+                    }
+                    if (selectedfragment != null) {
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                                selectedfragment).commit();
+                    }
+
+                    return true;
+                }
+            };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        MobileAds.initialize(this, "ca-app-pub-3246286025057129~5385371312");
+
+        //Interestial Ad
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId("ca-app-pub-3246286025057129/4311962790");
+        mInterstitialAd.loadAd(new AdRequest.Builder().build());
 
 
         Toast.makeText(getBaseContext(), "Welcome to Fishta", Toast.LENGTH_LONG).show();
@@ -94,43 +146,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-
-
-    private BottomNavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener =
-            new BottomNavigationView.OnNavigationItemSelectedListener() {
-                @Override
-                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
-                    switch (item.getItemId()) {
-                        case R.id.nav_home:
-                            selectedfragment = new HomeFragment();
-                            break;
-                        case R.id.nav_search:
-                            selectedfragment = new SearchFragment();
-
-                            break;
-                        case R.id.nav_add:
-                            selectedfragment = null;
-                            startActivity(new Intent(MainActivity.this, PostActivity.class));
-                            break;
-                        case R.id.nav_heart:
-                            selectedfragment = new NotificationFragment();
-                            break;
-                        case R.id.nav_profile:
-                            SharedPreferences.Editor editor = getSharedPreferences("PREFS", MODE_PRIVATE).edit();
-                            editor.putString("profileid", FirebaseAuth.getInstance().getCurrentUser().getUid());
-                            editor.apply();
-                            selectedfragment = new ProfileFragment();
-                            break;
-                    }
-                    if (selectedfragment != null) {
-                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                                selectedfragment).commit();
-                    }
-
-                    return true;
-                }
-            };
 
     public void setStatusBarColor(View statusBar, int color) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {

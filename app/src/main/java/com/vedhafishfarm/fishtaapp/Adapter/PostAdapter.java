@@ -33,6 +33,8 @@ import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -79,7 +81,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
     private String postUrl;
 
     private String likedUserName;
-    private String tempUserImage;
 
 
 
@@ -88,6 +89,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
         mContext = context;
         mPosts = posts;
     }
+
 
     @NonNull
     @Override
@@ -104,6 +106,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         final Post post = mPosts.get(position);
 
+        //AdMob
+
+        AdRequest adRequest = new AdRequest.Builder().build();
+        holder.mAdView.loadAd(adRequest);
 
         final Drawable drawable = holder.heart_image.getDrawable();
 
@@ -363,6 +369,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
         public ImageView image_profile, post_image, like, comment, save, more, heart_image;
         public TextView username, likes, publisher, description, comments;
 
+        public AdView mAdView;
+
         public ImageViewHolder(View itemView) {
             super(itemView);
 
@@ -378,7 +386,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
             comments = itemView.findViewById(R.id.comments);
             more = itemView.findViewById(R.id.more);
             heart_image = itemView.findViewById(R.id.heart_image);
-
+            mAdView = itemView.findViewById(R.id.adView);
 
         }
     }

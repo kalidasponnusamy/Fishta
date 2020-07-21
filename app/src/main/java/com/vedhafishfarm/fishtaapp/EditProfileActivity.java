@@ -20,6 +20,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.NativeExpressAdView;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -59,12 +61,14 @@ public class EditProfileActivity extends AppCompatActivity {
     private StorageTask uploadTask;
     StorageReference storageRef;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
 
         setStatusBarColor(findViewById(R.id.statusBarBackground), getResources().getColor(R.color.border));
+
 
         close = findViewById(R.id.close);
         image_profile = findViewById(R.id.image_profile);
@@ -237,4 +241,6 @@ public class EditProfileActivity extends AppCompatActivity {
             Toast.makeText(this, "Something gone wrong!", Toast.LENGTH_SHORT).show();
         }
     }
+
+
 }

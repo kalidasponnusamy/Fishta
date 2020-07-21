@@ -181,15 +181,31 @@
                     android:layout_marginTop="5dp"
                     android:id="@+id/bio"
                     android:maxLines="5"
-                    android:textColor="@color/colorPrimaryDark"/>
+                    android:textColor="@color/colorPrimaryDark" />
 
             </LinearLayout>
+
+            <!--            <LinearLayout-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:id="@+id/ad_Layout"-->
+            <!--                android:orientation="horizontal">-->
+
+            <!--                <com.google.android.gms.ads.AdView-->
+            <!--                    android:id="@+id/adView"-->
+            <!--                    android:layout_width="match_parent"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    app:adSize="BANNER"-->
+            <!--                    app:adUnitId = "ca-app-pub-3940256099942544/6300978111"/>-->
+
+
+            <!--            </LinearLayout>-->
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/mid_bar"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="5dp"
                 android:layout_marginLeft="-5dp"
                 android:layout_marginRight="-5dp"
                 android:id="@+id/last_bar"

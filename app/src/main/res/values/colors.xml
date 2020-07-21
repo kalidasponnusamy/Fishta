@@ -13,4 +13,12 @@
     <color name="colorGreen">#4cab03</color>
     <color name="colorWindow">?android:attr/windowBackground</color>
     <color name="transparent">#00000000</color>
+
+    <!-- Native Ad Colors-->
+    <color name="ad_attribution_background_color">#FFA500</color>
+    <color name="ad_background_color">#FFFFF0</color>
+    <color name="ad_heading_color">#00008B</color>
+    <color name="ad_body_text_color">#696969</color>
+    <color name="ad_button_color">#6200EE</color>
+    <color name="ad_button_text_color">#ffffff</color>
 </resources>

@@ -1,12 +1,15 @@
 package com.vedhafishfarm.fishtaapp;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -34,6 +37,8 @@ public class FollowersActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_followers);
+
+        setStatusBarColor(findViewById(R.id.statusBarBackground), getResources().getColor(R.color.border));
 
         Intent intent = getIntent();
         id = intent.getStringExtra("id");
@@ -185,5 +190,14 @@ public class FollowersActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    public void setStatusBarColor(View statusBar, int color) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Window w = getWindow();
+            w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            statusBar.setBackgroundColor(color);
+
+        }
     }
 }

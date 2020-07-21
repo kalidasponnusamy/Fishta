@@ -3,6 +3,7 @@ package com.vedhafishfarm.fishtaapp;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -24,7 +25,12 @@ import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 import com.theartofdev.edmodo.cropper.CropImage;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
+
+import id.zelory.compressor.Compressor;
 
 public class AddStoryActivity extends AppCompatActivity {
 
@@ -52,15 +58,25 @@ public class AddStoryActivity extends AppCompatActivity {
         return mime.getExtensionFromMimeType(cR.getType(uri));
     }
 
-    private void uploadImage_10(){
+    private void uploadImage_10() throws IOException {
         final ProgressDialog pd = new ProgressDialog(this);
         pd.setMessage("Posting");
         pd.show();
-        if (mImageUri != null){
+        if (mImageUri != null) {
             final StorageReference fileReference = storageRef.child(System.currentTimeMillis()
                     + "." + getFileExtension(mImageUri));
 
-            uploadTask = fileReference.putFile(mImageUri);
+            File actualImage = new File(mImageUri.getPath());
+
+            Bitmap bmp = new Compressor(this)
+                    .setMaxWidth(500)
+                    .setMaxHeight(500)
+                    .setQuality(50)
+                    .compressToBitmap(actualImage);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bmp.compress(Bitmap.CompressFormat.WEBP, 50, baos);
+            byte[] data = baos.toByteArray();
+            uploadTask = fileReference.putBytes(data);
             uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                 @Override
                 public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
@@ -122,7 +138,11 @@ public class AddStoryActivity extends AppCompatActivity {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             mImageUri = result.getUri();
 
-            uploadImage_10();
+            try {
+                uploadImage_10();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
         } else {
             Toast.makeText(this, "Something gone wrong!", Toast.LENGTH_SHORT).show();
