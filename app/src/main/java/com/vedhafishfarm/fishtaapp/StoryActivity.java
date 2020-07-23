@@ -1,6 +1,7 @@
 package com.vedhafishfarm.fishtaapp;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +13,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
+import com.bumptech.glide.load.DecodeFormat;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -199,13 +204,16 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
             public void onDataChange(DataSnapshot dataSnapshot) {
                 images.clear();
                 storyids.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Story story = snapshot.getValue(Story.class);
-                    long timecurrent = System.currentTimeMillis();
-                    if (timecurrent > story.getTimestart() && timecurrent < story.getTimeend()) {
-                        images.add(story.getImageurl());
-                        storyids.add(story.getStoryid());
+                    if (story != null) {
+                        long timecurrent = System.currentTimeMillis();
+                        if (timecurrent > story.getTimestart() && timecurrent < story.getTimeend()) {
+                            images.add(story.getImageurl());
+                            storyids.add(story.getStoryid());
+                        }
                     }
+
                 }
 
                 storiesProgressView.setStoriesCount(images.size());
@@ -213,7 +221,9 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
                 storiesProgressView.setStoriesListener(StoryActivity.this);
                 storiesProgressView.startStories(counter);
 
-                Glide.with(getApplicationContext()).load(images.get(counter)).into(image);
+
+                Glide.with(getApplicationContext())
+                        .load(images.get(counter)).into(image);
                 //
                 addView(storyids.get(counter));
                 seenNumber(storyids.get(counter));
@@ -234,8 +244,24 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
-                Glide.with(getApplicationContext()).load(user.getImageurl()).into(story_photo);
-                story_username.setText(user.getUsername());
+                RequestOptions requestOptions = new RequestOptions()
+                        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                        .skipMemoryCache(true)
+                        .centerCrop()
+                        .dontAnimate()
+                        .dontTransform()
+                        .override(100, 100)
+                        .placeholder(R.drawable.placeholder)
+                        .priority(Priority.IMMEDIATE)
+                        .encodeFormat(Bitmap.CompressFormat.PNG)
+                        .format(DecodeFormat.DEFAULT);
+                if (user != null) {
+                    Glide.with(getApplicationContext())
+                            .applyDefaultRequestOptions(requestOptions)
+                            .load(user.getImageurl()).into(story_photo);
+                    story_username.setText(user.getUsername());
+                }
+
             }
 
             @Override

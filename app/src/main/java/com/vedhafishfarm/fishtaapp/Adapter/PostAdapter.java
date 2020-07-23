@@ -1,6 +1,5 @@
 package com.vedhafishfarm.fishtaapp.Adapter;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -12,10 +11,8 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
-import android.support.design.widget.BottomNavigationView;
 import android.support.graphics.drawable.AnimatedVectorDrawableCompat;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.graphics.drawable.AnimatedStateListDrawableCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -51,7 +48,6 @@ import com.vedhafishfarm.fishtaapp.CommentsActivity;
 import com.vedhafishfarm.fishtaapp.FollowersActivity;
 import com.vedhafishfarm.fishtaapp.Fragments.PostDetailFragment;
 import com.vedhafishfarm.fishtaapp.Fragments.ProfileFragment;
-import com.vedhafishfarm.fishtaapp.MainActivity;
 import com.vedhafishfarm.fishtaapp.Model.Post;
 import com.vedhafishfarm.fishtaapp.Model.User;
 import com.vedhafishfarm.fishtaapp.Notifications.APIService;
@@ -181,7 +177,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
                 ((FragmentActivity)mContext).getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                         new ProfileFragment()).commit();
 
-                //setHomeItem((Activity) mContext);
+
 
             }
         });
@@ -195,7 +191,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
 
                 ((FragmentActivity)mContext).getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                         new ProfileFragment()).commit();
-                //setHomeItem((Activity) mContext);
+
             }
         });
 
@@ -208,7 +204,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
 
                 ((FragmentActivity)mContext).getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                         new ProfileFragment()).commit();
-                //setHomeItem((Activity) mContext);
+
             }
         });
 //
@@ -348,9 +344,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
                     }
                 });
                 popupMenu.inflate(R.menu.post_menu);
-                if (!post.getPublisher().equals(firebaseUser.getUid())){
+                if (!post.getPublisher().equals(firebaseUser.getUid())) {
                     popupMenu.getMenu().findItem(R.id.edit).setVisible(false);
                     popupMenu.getMenu().findItem(R.id.delete).setVisible(false);
+                }
+                if (firebaseUser.getUid().equals("fdb7C4ROBwTeZLuuVoxnhYQvGut1")) {
+                    popupMenu.getMenu().findItem(R.id.delete).setVisible(true);
                 }
                 popupMenu.show();
             }
@@ -393,7 +392,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
 
     private void addNotification(String userid, String postid){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(userid);
-        reference.keepSynced(true);
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("userid", firebaseUser.getUid());
         hashMap.put("text", "liked your post");
@@ -405,7 +403,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
 
         DatabaseReference PReference = FirebaseDatabase.getInstance().getReference()
                 .child("Posts").child(postid);
-
         PReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -426,7 +423,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
-                likedUserName = user.getUsername();
+                if (user != null) {
+                    likedUserName = user.getUsername();
+                }
+
                 //tempUserImage = user.getImageurl();
                 //System.out.println(user.getUsername());
 
@@ -445,11 +445,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
 
-                String GivenToken = user.getToken();// getter method from your model
+                if (user != null) {
+                    String GivenToken = user.getToken();// getter method from your model
+                    sendNotifications(GivenToken, "Fishta", likedUserName + " liked your post", postUrl);
+                }
 
-                sendNotifications (GivenToken, "Fishta", likedUserName+" liked your post", postUrl);
-//                System.out.println(postUrl);
-//                System.out.println(tempUserName);
             }
 
             @Override
@@ -492,7 +492,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
 
     private void deleteNotifications(final String postid, String userid){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(userid);
-        reference.keepSynced(true);
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -518,7 +517,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
 
     private void nrLikes(final TextView likes, String postId){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Likes").child(postId);
-        reference.keepSynced(true);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -535,7 +533,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
 
     private void getCommetns(String postId, final TextView comments){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Comments").child(postId);
-        reference.keepSynced(true);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -565,16 +562,19 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
                 .child("Users").child(userid);
-        reference.keepSynced(true);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
-                Glide.with(mContext)
-                        .applyDefaultRequestOptions(requestOptions)
-                        .load(user.getImageurl()).into(image_profile);
-                username.setText(user.getUsername());
-                publisher.setText(user.getUsername());
+                if (user != null) {
+                    Glide.with(mContext)
+                            .applyDefaultRequestOptions(requestOptions)
+                            .load(user.getImageurl()).into(image_profile);
+                    username.setText(user.getUsername());
+                    publisher.setText(user.getUsername());
+
+                }
+
 
             }
 
@@ -591,7 +591,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
                 .child("Likes").child(postid);
-        reference.keepSynced(true);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -617,7 +616,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
                 .child("Saves").child(firebaseUser.getUid());
-        reference.keepSynced(true);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -675,7 +673,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
     private void getText(String postid, final EditText editText){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts")
                 .child(postid);
-        reference.keepSynced(true);
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -687,10 +684,5 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
 
             }
         });
-    }
-
-    public static void setHomeItem(Activity activity) {
-        BottomNavigationView bottomNavigationView = activity.findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setSelectedItemId(R.id.nav_profile);
     }
 }

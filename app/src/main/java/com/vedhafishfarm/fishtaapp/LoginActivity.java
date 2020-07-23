@@ -115,12 +115,6 @@ public class LoginActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Window w = getWindow();
             w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-
-            //status bar height
-            //int actionBarHeight = getActionBarHeight();
-            //int statusBarHeight = getStatusBarHeight();
-            //action bar height
-            //statusBar.getLayoutParams().height = actionBarHeight + statusBarHeight;
             statusBar.setBackgroundColor(color);
 
         }

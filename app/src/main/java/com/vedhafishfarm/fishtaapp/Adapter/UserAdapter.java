@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
@@ -147,7 +146,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ImageViewHolde
 
     private void addNotification(String userid){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(userid);
-        reference.keepSynced(true);
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("userid", firebaseUser.getUid());
         hashMap.put("text", "started following you");
@@ -164,8 +162,11 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ImageViewHolde
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
-                tempUserName = user.getUsername();
-                tempUserImage = user.getImageurl();
+                if (user != null) {
+                    tempUserName = user.getUsername();
+                    tempUserImage = user.getImageurl();
+                }
+
                 //System.out.println(user.getUsername());
             }
 
@@ -182,9 +183,10 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ImageViewHolde
 
                 User user = dataSnapshot.getValue(User.class);
 
-                String GivenToken = user.getToken();// getter method from your model
-                //System.out.println(GivenToken);
-                sendNotifications (GivenToken, "Fishta", tempUserName+" followed you", tempUserImage );
+                if (user != null) {
+                    String GivenToken = user.getToken();// getter method from your model
+                    sendNotifications(GivenToken, "Fishta", tempUserName + " followed you", tempUserImage);
+                }
             }
 
             @Override
@@ -259,7 +261,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ImageViewHolde
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
                 .child("Follow").child(firebaseUser.getUid()).child("following");
-        reference.keepSynced(true);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

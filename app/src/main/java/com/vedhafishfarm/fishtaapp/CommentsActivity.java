@@ -1,13 +1,9 @@
 package com.vedhafishfarm.fishtaapp;
 
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.content.Context;
+
 import android.content.Intent;
-import android.os.Build;
+import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +15,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
+import com.bumptech.glide.load.DecodeFormat;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -138,7 +138,6 @@ public class CommentsActivity extends AppCompatActivity {
 
     private void addNotification(){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(publisherid);
-
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("userid", firebaseUser.getUid());
         hashMap.put("text", "commented: "+addcomment.getText().toString());
@@ -154,9 +153,10 @@ public class CommentsActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
-                tempUserName = user.getUsername();
-                tempUserImage = user.getImageurl();
-                //System.out.println(user.getUsername());
+                if (user != null) {
+                    tempUserName = user.getUsername();
+                    tempUserImage = user.getImageurl();
+                }
             }
 
             @Override
@@ -173,9 +173,11 @@ public class CommentsActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
 
-                String GivenToken = user.getToken();// getter method from your model
-                //System.out.println(GivenToken);
-                sendNotifications (GivenToken, "Fishta", tempUserName+ " commented: "+ tempComment, tempUserImage);
+                if (user != null) {
+                    String GivenToken = user.getToken();// getter method from your model
+                    //System.out.println(GivenToken);
+                    sendNotifications(GivenToken, "Fishta", tempUserName + " commented: " + tempComment, tempUserImage);
+                }
             }
 
             @Override
@@ -228,7 +230,24 @@ public class CommentsActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
-                Glide.with(getApplicationContext()).load(user.getImageurl()).into(image_profile);
+                RequestOptions requestOptions = new RequestOptions()
+                        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                        .skipMemoryCache(true)
+                        .centerCrop()
+                        .dontAnimate()
+                        .dontTransform()
+                        .override(100, 100)
+                        .placeholder(R.drawable.placeholder)
+                        .priority(Priority.IMMEDIATE)
+                        .encodeFormat(Bitmap.CompressFormat.PNG)
+                        .format(DecodeFormat.DEFAULT);
+
+                if (user != null) {
+                    Glide.with(getApplicationContext())
+                            .applyDefaultRequestOptions(requestOptions)
+                            .load(user.getImageurl()).into(image_profile);
+                }
+
             }
 
             @Override

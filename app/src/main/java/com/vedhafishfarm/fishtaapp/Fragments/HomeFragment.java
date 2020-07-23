@@ -75,7 +75,7 @@ public class HomeFragment extends Fragment {
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setItemViewCacheSize(20);
         recyclerView.setDrawingCacheEnabled(true);
-        recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_LOW);
 
         recyclerView_story = view.findViewById(R.id.recycler_view_story);
         recyclerView_story.setHasFixedSize(true);
@@ -88,7 +88,7 @@ public class HomeFragment extends Fragment {
         recyclerView_story.setAdapter(storyAdapter);
         recyclerView_story.setItemViewCacheSize(20);
         recyclerView_story.setDrawingCacheEnabled(true);
-        recyclerView_story.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        recyclerView_story.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_LOW);
 
         progress_circular = view.findViewById(R.id.progress_circular);
 
@@ -141,7 +141,6 @@ public class HomeFragment extends Fragment {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Follow")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .child("following");
-        reference.keepSynced(true);
 
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -164,7 +163,6 @@ public class HomeFragment extends Fragment {
 
     private void readPosts() {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
-        reference.keepSynced(true);
 
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -173,9 +171,12 @@ public class HomeFragment extends Fragment {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Post post = snapshot.getValue(Post.class);
                     for (String id : followingList) {
-                        if (post.getPublisher().equals(id)) {
-                            postList.add(post);
+                        if (post != null) {
+                            if (post.getPublisher().equals(id)) {
+                                postList.add(post);
+                            }
                         }
+
                     }
                 }
 
@@ -192,7 +193,6 @@ public class HomeFragment extends Fragment {
 
     private void readStory() {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Story");
-        reference.keepSynced(true);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -205,9 +205,12 @@ public class HomeFragment extends Fragment {
                     Story story = null;
                     for (DataSnapshot snapshot : dataSnapshot.child(id).getChildren()) {
                         story = snapshot.getValue(Story.class);
-                        if (timecurrent > story.getTimestart() && timecurrent < story.getTimeend()) {
-                            countStory++;
+                        if (story != null) {
+                            if (timecurrent > story.getTimestart() && timecurrent < story.getTimeend()) {
+                                countStory++;
+                            }
                         }
+
                     }
                     if (countStory > 0) {
                         storyList.add(story);
@@ -223,4 +226,6 @@ public class HomeFragment extends Fragment {
             }
         });
     }
+
+
 }

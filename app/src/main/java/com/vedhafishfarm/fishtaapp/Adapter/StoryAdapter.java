@@ -114,7 +114,6 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.ViewHolder>{
 
     private void userInfo(final ViewHolder viewHolder, String userid, final int pos){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(userid);
-        reference.keepSynced(true);
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -131,15 +130,20 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.ViewHolder>{
                         .encodeFormat(Bitmap.CompressFormat.PNG)
                         .format(DecodeFormat.DEFAULT);
 
-                Glide.with(mContext)
-                        .applyDefaultRequestOptions(requestOptions)
-                        .load(user.getImageurl()).into(viewHolder.story_photo);
-                if (pos != 0) {
+                if (user != null) {
                     Glide.with(mContext)
                             .applyDefaultRequestOptions(requestOptions)
-                            .load(user.getImageurl()).into(viewHolder.story_photo_seen);
-                    viewHolder.story_username.setText(user.getUsername());
+                            .load(user.getImageurl()).into(viewHolder.story_photo);
+                    if (pos != 0) {
+                        Glide.with(mContext)
+                                .applyDefaultRequestOptions(requestOptions)
+                                .load(user.getImageurl()).into(viewHolder.story_photo_seen);
+                        viewHolder.story_username.setText(user.getUsername());
+                    }
+
                 }
+
+
             }
 
             @Override
@@ -152,7 +156,6 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.ViewHolder>{
     private void myStory(final TextView textView, final ImageView imageView, final boolean click){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Story")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-        reference.keepSynced(true);
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -212,7 +215,6 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.ViewHolder>{
     private void seenStory(final ViewHolder viewHolder, String userid){
         DatabaseReference reference  = FirebaseDatabase.getInstance().getReference("Story")
                 .child(userid);
-        reference.keepSynced(true);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

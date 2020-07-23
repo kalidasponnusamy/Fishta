@@ -1,17 +1,13 @@
 package com.vedhafishfarm.fishtaapp;
-
-import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
-import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.google.firebase.database.FirebaseDatabase;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -19,7 +15,6 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
         setStatusBarColor(findViewById(R.id.statusBarBackground), getResources().getColor(R.color.white));
 

@@ -100,13 +100,28 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     private void getUserInfo(final ImageView imageView, final TextView username, String publisherid){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
                 .child("Users").child(publisherid);
-        reference.keepSynced(true);
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
-                Glide.with(mContext).load(user.getImageurl()).into(imageView);
-                username.setText(user.getUsername());
+                RequestOptions requestOptions = new RequestOptions()
+                        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                        .skipMemoryCache(true)
+                        .centerCrop()
+                        .dontAnimate()
+                        .dontTransform()
+                        .override(100, 100)
+                        .placeholder(R.drawable.placeholder)
+                        .priority(Priority.IMMEDIATE)
+                        .encodeFormat(Bitmap.CompressFormat.PNG)
+                        .format(DecodeFormat.DEFAULT);
+                if (user != null) {
+                    Glide.with(mContext)
+                            .applyDefaultRequestOptions(requestOptions)
+                            .load(user.getImageurl()).into(imageView);
+                    username.setText(user.getUsername());
+
+                }
 
             }
 
@@ -120,7 +135,6 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     private void getPostImage(final ImageView post_image, String postid){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
                 .child("Posts").child(postid);
-        reference.keepSynced(true);
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -132,7 +146,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                         .centerCrop()
                         .dontAnimate()
                         .dontTransform()
-                        .override(10, 10)
+                        .override(100, 100)
                         .placeholder(R.drawable.placeholder)
                         .priority(Priority.IMMEDIATE)
                         .encodeFormat(Bitmap.CompressFormat.PNG)

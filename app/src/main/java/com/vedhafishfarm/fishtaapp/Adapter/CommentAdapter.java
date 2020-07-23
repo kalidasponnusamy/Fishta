@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,6 +15,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
+import com.bumptech.glide.load.DecodeFormat;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -173,13 +178,31 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ImageVie
     private void getUserInfo(final ImageView imageView, final TextView username, String publisherid) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
                 .child("Users").child(publisherid);
-        reference.keepSynced(true);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
-                Glide.with(mContext).load(user.getImageurl()).into(imageView);
-                username.setText(user.getUsername());
+
+                RequestOptions requestOptions = new RequestOptions()
+                        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                        .skipMemoryCache(true)
+                        .centerCrop()
+                        .dontAnimate()
+                        .dontTransform()
+                        .override(100, 100)
+                        .placeholder(R.drawable.placeholder)
+                        .priority(Priority.IMMEDIATE)
+                        .encodeFormat(Bitmap.CompressFormat.PNG)
+                        .format(DecodeFormat.DEFAULT);
+
+                if (user != null) {
+                    if (user.getImageurl() != null && user.getImageurl().equals("default")) {
+                        Glide.with(mContext)
+                                .applyDefaultRequestOptions(requestOptions)
+                                .load(user.getImageurl()).into(imageView);
+                        username.setText(user.getUsername());
+                    }
+                }
             }
 
             @Override

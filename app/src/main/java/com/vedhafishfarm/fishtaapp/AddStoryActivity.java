@@ -71,10 +71,10 @@ public class AddStoryActivity extends AppCompatActivity {
             Bitmap bmp = new Compressor(this)
                     .setMaxWidth(500)
                     .setMaxHeight(500)
-                    .setQuality(50)
+                    .setQuality(100)
                     .compressToBitmap(actualImage);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bmp.compress(Bitmap.CompressFormat.WEBP, 50, baos);
+            bmp.compress(Bitmap.CompressFormat.WEBP, 100, baos);
             byte[] data = baos.toByteArray();
             uploadTask = fileReference.putBytes(data);
             uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {

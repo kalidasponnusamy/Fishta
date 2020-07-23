@@ -85,7 +85,6 @@ public class FollowersActivity extends AppCompatActivity {
     private void getViews(){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Story")
                 .child(id).child(getIntent().getStringExtra("storyid")).child("views");
-        reference.keepSynced(true);
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -106,7 +105,6 @@ public class FollowersActivity extends AppCompatActivity {
     private void getFollowers() {
         DatabaseReference FReference = FirebaseDatabase.getInstance().getReference("Follow")
                 .child(id).child("followers");
-        FReference.keepSynced(true);
         FReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -127,7 +125,6 @@ public class FollowersActivity extends AppCompatActivity {
     private void getFollowing() {
         DatabaseReference FlReference = FirebaseDatabase.getInstance().getReference("Follow")
                 .child(id).child("following");
-        FlReference.keepSynced(true);
         FlReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -148,7 +145,6 @@ public class FollowersActivity extends AppCompatActivity {
     private void getLikes() {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Likes")
                 .child(id);
-        reference.keepSynced(true);
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -168,19 +164,21 @@ public class FollowersActivity extends AppCompatActivity {
 
     private void showUsers() {
         DatabaseReference ShowReference = FirebaseDatabase.getInstance().getReference("Users");
-        ShowReference.keepSynced(true);
         ShowReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 userList.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     User user = snapshot.getValue(User.class);
-                    for (String id : idList) {
-                        if (user.getId() != null && user.getId().equals(id)) {
-                            userList.add(user);
+                    if (user != null) {
+                        for (String id : idList) {
+                            if (user.getId() != null && user.getId().equals(id)) {
+                                userList.add(user);
 //
+                            }
                         }
                     }
+
                 }
                 userAdapter.notifyDataSetChanged();
             }

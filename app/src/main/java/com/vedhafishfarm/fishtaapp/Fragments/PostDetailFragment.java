@@ -1,6 +1,7 @@
 package com.vedhafishfarm.fishtaapp.Fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
@@ -23,6 +24,7 @@ import com.vedhafishfarm.fishtaapp.MainActivity;
 import com.vedhafishfarm.fishtaapp.Model.Post;
 import com.vedhafishfarm.fishtaapp.R;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,7 +71,6 @@ public class PostDetailFragment extends Fragment {
 
     private void readPost(){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts").child(postid);
-        reference.keepSynced(true);
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

@@ -20,6 +20,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
+import com.bumptech.glide.load.DecodeFormat;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.NativeExpressAdView;
 import com.google.android.gms.tasks.Continuation;
@@ -86,10 +90,27 @@ public class EditProfileActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
-                fullname.setText(user.getFullname());
-                username.setText(user.getUsername());
-                bio.setText(user.getBio());
-                Glide.with(getApplicationContext()).load(user.getImageurl()).into(image_profile);
+                if (user != null) {
+                    fullname.setText(user.getFullname());
+                    username.setText(user.getUsername());
+                    bio.setText(user.getBio());
+                }
+                RequestOptions requestOptions = new RequestOptions()
+                        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                        .skipMemoryCache(true)
+                        .centerCrop()
+                        .dontAnimate()
+                        .dontTransform()
+                        .override(100, 100)
+                        .placeholder(R.drawable.placeholder)
+                        .priority(Priority.IMMEDIATE)
+                        .encodeFormat(Bitmap.CompressFormat.PNG)
+                        .format(DecodeFormat.DEFAULT);
+                if (user != null) {
+                    Glide.with(getApplicationContext())
+                            .applyDefaultRequestOptions(requestOptions)
+                            .load(user.getImageurl()).into(image_profile);
+                }
             }
 
             @Override

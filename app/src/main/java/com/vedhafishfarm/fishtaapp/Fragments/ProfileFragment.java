@@ -1,22 +1,14 @@
 package com.vedhafishfarm.fishtaapp.Fragments;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.Rect;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,16 +23,12 @@ import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.vedhafishfarm.fishtaapp.Adapter.MyFotosAdapter;
@@ -53,7 +41,6 @@ import com.vedhafishfarm.fishtaapp.Notifications.Client;
 import com.vedhafishfarm.fishtaapp.Notifications.Data;
 import com.vedhafishfarm.fishtaapp.Notifications.MyResponse;
 import com.vedhafishfarm.fishtaapp.Notifications.Sender;
-import com.vedhafishfarm.fishtaapp.Notifications.Token;
 import com.vedhafishfarm.fishtaapp.OptionsActivity;
 import com.vedhafishfarm.fishtaapp.R;
 
@@ -65,9 +52,6 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.Retrofit.Builder;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -133,14 +117,14 @@ public class ProfileFragment extends Fragment  {
 
         postList = new ArrayList<>();
         recyclerView = view.findViewById(R.id.recycler_view);
-        //recyclerView.setHasFixedSize(true);
+        recyclerView.setHasFixedSize(true);
         LinearLayoutManager manager = new GridLayoutManager(getContext(),4 );
         recyclerView.setLayoutManager(manager);
         myFotosAdapter = new MyFotosAdapter(getContext(), postList);
         recyclerView.setAdapter(myFotosAdapter);
 
         recyclerView_saves = view.findViewById(R.id.recycler_view_save);
-        //recyclerView_saves.setHasFixedSize(true);
+        recyclerView_saves.setHasFixedSize(true);
         LinearLayoutManager mLayoutManagers = new GridLayoutManager(getContext(), 4);
         recyclerView_saves.setLayoutManager(mLayoutManagers);
         postList_saves = new ArrayList<>();
@@ -240,7 +224,6 @@ public class ProfileFragment extends Fragment  {
 
     private void addNotification(){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(profileid);
-        reference.keepSynced(true);
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("userid", firebaseUser.getUid());
         hashMap.put("text", "started following you");
@@ -251,14 +234,15 @@ public class ProfileFragment extends Fragment  {
 
         DatabaseReference PReference = FirebaseDatabase.getInstance().getReference()
                 .child("Users").child(firebaseUser.getUid());
-        PReference.keepSynced(true);
         PReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
-                tempUserName = user.getUsername();
-                tempUserImage = user.getImageurl();
-                //System.out.println(user.getUsername());
+                if (user != null) {
+                    tempUserName = user.getUsername();
+                    tempUserImage = user.getImageurl();
+                }
+
             }
 
             @Override
@@ -268,7 +252,6 @@ public class ProfileFragment extends Fragment  {
         });
 
         DatabaseReference mreference = FirebaseDatabase.getInstance().getReference("Users").child(profileid);
-        mreference.keepSynced(true);
         mreference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -276,10 +259,11 @@ public class ProfileFragment extends Fragment  {
                     return;
                 }
                 User user = dataSnapshot.getValue(User.class);
-
-                String GivenToken = user.getToken();// getter method from your model
-                //System.out.println(GivenToken);
-                sendNotifications (GivenToken, "Fishta", tempUserName +" followed you", tempUserImage );
+                if (user != null) {
+                    String GivenToken = user.getToken();// getter method from your model
+                    //System.out.println(GivenToken);
+                    sendNotifications(GivenToken, "Fishta", tempUserName + " followed you", tempUserImage);
+                }
             }
 
             @Override
@@ -329,7 +313,6 @@ public class ProfileFragment extends Fragment  {
 
     private void userInfo(){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(profileid);
-        reference.keepSynced(true);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -350,13 +333,15 @@ public class ProfileFragment extends Fragment  {
                         .encodeFormat(Bitmap.CompressFormat.PNG)
                         .format(DecodeFormat.DEFAULT);
 
+                if (user != null) {
+                    Glide.with(getContext())
+                            .applyDefaultRequestOptions(requestOptions)
+                            .load(user.getImageurl()).into(image_profile);
+                    username.setText(user.getUsername());
+                    fullname.setText(user.getFullname());
+                    bio.setText(user.getBio());
+                }
 
-                Glide.with(getContext())
-                        .applyDefaultRequestOptions(requestOptions)
-                        .load(user.getImageurl()).into(image_profile);
-                username.setText(user.getUsername());
-                fullname.setText(user.getFullname());
-                bio.setText(user.getBio());
 
             }
 
@@ -370,7 +355,6 @@ public class ProfileFragment extends Fragment  {
     private void checkFollow(){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
                 .child("Follow").child(firebaseUser.getUid()).child("following");
-        reference.keepSynced(true);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -390,7 +374,6 @@ public class ProfileFragment extends Fragment  {
 
     private void getFollowers(){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Follow").child(profileid).child("followers");
-        reference.keepSynced(true);
         reference.addValueEventListener(new ValueEventListener() {
             @SuppressLint("SetTextI18n")
             @Override
@@ -405,7 +388,6 @@ public class ProfileFragment extends Fragment  {
         });
 
         DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Follow").child(profileid).child("following");
-        reference1.keepSynced(true);
         reference1.addValueEventListener(new ValueEventListener() {
             @SuppressLint("SetTextI18n")
             @Override
@@ -422,16 +404,18 @@ public class ProfileFragment extends Fragment  {
 
     private void getNrPosts(){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
-        reference.keepSynced(true);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 int i = 0;
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Post post = snapshot.getValue(Post.class);
-                    if (post.getPublisher().equals(profileid)) {
-                        i++;
+                    if (post != null) {
+                        if (post.getPublisher().equals(profileid)) {
+                            i++;
+                        }
                     }
+
                 }
                 posts.setText(""+i);
             }
@@ -445,16 +429,18 @@ public class ProfileFragment extends Fragment  {
 
     private void myFotos(){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
-        reference.keepSynced(true);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 postList.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Post post = snapshot.getValue(Post.class);
-                    if (post.getPublisher().equals(profileid)) {
-                        postList.add(post);
+                    if (post != null) {
+                        if (post.getPublisher().equals(profileid)) {
+                            postList.add(post);
+                        }
                     }
+
                 }
                 Collections.reverse(postList);
                 myFotosAdapter.notifyDataSetChanged();
@@ -470,7 +456,6 @@ public class ProfileFragment extends Fragment  {
     private void mySaves(){
         mySaves = new ArrayList<>();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Saves").child(firebaseUser.getUid());
-        reference.keepSynced(true);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -489,19 +474,20 @@ public class ProfileFragment extends Fragment  {
 
     private void readSaves(){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
-        reference.keepSynced(true);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 postList_saves.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Post post = snapshot.getValue(Post.class);
-
-                    for (String id : mySaves) {
-                        if (post.getPostid().equals(id)) {
-                            postList_saves.add(post);
+                    if (post != null) {
+                        for (String id : mySaves) {
+                            if (post.getPostid().equals(id)) {
+                                postList_saves.add(post);
+                            }
                         }
                     }
+
                 }
                 myFotosAdapter_saves.notifyDataSetChanged();
             }
@@ -512,6 +498,5 @@ public class ProfileFragment extends Fragment  {
             }
         });
     }
-
 
 }

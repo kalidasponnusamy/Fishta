@@ -1,5 +1,6 @@
 package com.vedhafishfarm.fishtaapp.Fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,6 +20,7 @@ import com.vedhafishfarm.fishtaapp.Adapter.NotificationAdapter;
 import com.vedhafishfarm.fishtaapp.Model.Notification;
 import com.vedhafishfarm.fishtaapp.R;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -54,7 +56,6 @@ public class NotificationFragment extends Fragment {
     private void readNotifications(){
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(firebaseUser.getUid());
-        reference.keepSynced(true);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -74,4 +75,5 @@ public class NotificationFragment extends Fragment {
             }
         });
     }
+
 }
