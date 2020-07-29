@@ -127,7 +127,7 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.ViewHolder>{
                         .override(50, 50)
                         .placeholder(R.drawable.placeholder)
                         .priority(Priority.IMMEDIATE)
-                        .encodeFormat(Bitmap.CompressFormat.PNG)
+                        .encodeFormat(Bitmap.CompressFormat.WEBP)
                         .format(DecodeFormat.DEFAULT);
 
                 if (user != null) {

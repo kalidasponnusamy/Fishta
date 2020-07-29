@@ -30,8 +30,6 @@ import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -46,7 +44,6 @@ import com.pedromassango.doubleclick.DoubleClick;
 import com.pedromassango.doubleclick.DoubleClickListener;
 import com.vedhafishfarm.fishtaapp.CommentsActivity;
 import com.vedhafishfarm.fishtaapp.FollowersActivity;
-import com.vedhafishfarm.fishtaapp.Fragments.PostDetailFragment;
 import com.vedhafishfarm.fishtaapp.Fragments.ProfileFragment;
 import com.vedhafishfarm.fishtaapp.Model.Post;
 import com.vedhafishfarm.fishtaapp.Model.User;
@@ -78,13 +75,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
 
     private String likedUserName;
 
-
-
-
     public PostAdapter(Context context, List<Post> posts){
         mContext = context;
         mPosts = posts;
     }
+
 
 
     @NonNull
@@ -102,10 +97,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         final Post post = mPosts.get(position);
 
-        //AdMob
 
-        AdRequest adRequest = new AdRequest.Builder().build();
-        holder.mAdView.loadAd(adRequest);
 
         final Drawable drawable = holder.heart_image.getDrawable();
 
@@ -119,7 +111,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
                 .override(500, 500)
                 .placeholder(R.drawable.placeholder)
                 .priority(Priority.IMMEDIATE)
-                .encodeFormat(Bitmap.CompressFormat.PNG)
+                .encodeFormat(Bitmap.CompressFormat.WEBP)
                 .format(DecodeFormat.DEFAULT);
 
         Glide.with(mContext)
@@ -368,8 +360,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
         public ImageView image_profile, post_image, like, comment, save, more, heart_image;
         public TextView username, likes, publisher, description, comments;
 
-        public AdView mAdView;
-
         public ImageViewHolder(View itemView) {
             super(itemView);
 
@@ -385,10 +375,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
             comments = itemView.findViewById(R.id.comments);
             more = itemView.findViewById(R.id.more);
             heart_image = itemView.findViewById(R.id.heart_image);
-            mAdView = itemView.findViewById(R.id.adView);
 
         }
     }
+
 
     private void addNotification(String userid, String postid){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(userid);
@@ -407,8 +397,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Post post = dataSnapshot.getValue(Post.class);
-                postUrl = post.getPostimage();
-                //System.out.println(postUrl);
+                if (post != null) {
+                    postUrl = post.getPostimage();
+                    //System.out.println(postUrl);
+                }
             }
 
             @Override
@@ -557,7 +549,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
                 .override(50, 50)
                 .placeholder(R.drawable.placeholder)
                 .priority(Priority.IMMEDIATE)
-                .encodeFormat(Bitmap.CompressFormat.PNG)
+                .encodeFormat(Bitmap.CompressFormat.WEBP)
                 .format(DecodeFormat.DEFAULT);
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference()

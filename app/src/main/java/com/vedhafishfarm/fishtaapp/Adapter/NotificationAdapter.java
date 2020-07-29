@@ -113,7 +113,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                         .override(100, 100)
                         .placeholder(R.drawable.placeholder)
                         .priority(Priority.IMMEDIATE)
-                        .encodeFormat(Bitmap.CompressFormat.PNG)
+                        .encodeFormat(Bitmap.CompressFormat.WEBP)
                         .format(DecodeFormat.DEFAULT);
                 if (user != null) {
                     Glide.with(mContext)
@@ -149,7 +149,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                         .override(100, 100)
                         .placeholder(R.drawable.placeholder)
                         .priority(Priority.IMMEDIATE)
-                        .encodeFormat(Bitmap.CompressFormat.PNG)
+                        .encodeFormat(Bitmap.CompressFormat.WEBP)
                         .format(DecodeFormat.DEFAULT);
 
                 Glide.with(mContext)

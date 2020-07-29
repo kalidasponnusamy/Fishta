@@ -145,12 +145,6 @@
             android:text="View All 20 Comments"
             android:textColor="@color/colorAccent" />
 
-        <com.google.android.gms.ads.AdView
-            android:id="@+id/adView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:adSize="BANNER"
-            app:adUnitId="ca-app-pub-3246286025057129/2107389713" />
 
     </LinearLayout>
 

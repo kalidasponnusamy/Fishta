@@ -38,6 +38,7 @@
                     android:layout_marginLeft="-50dp"
                     android:layout_toRightOf="@id/logo_image" />
 
+
                 <ImageView
                     android:id="@+id/shareApp"
                     android:layout_width="wrap_content"
@@ -66,6 +67,13 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <com.google.android.gms.ads.AdView
+                android:id="@+id/adView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:adSize="BANNER"
+                app:adUnitId="ca-app-pub-3246286025057129/2107389713" />
+
             <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -79,6 +87,7 @@
                 android:layout_height="0.8sp"
                 android:layout_marginTop="6dp"
                 android:background="@color/border" />
+
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycler_view"

@@ -92,7 +92,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ImageViewHolde
                 .override(100, 100)
                 .placeholder(R.drawable.placeholder)
                 .priority(Priority.IMMEDIATE)
-                .encodeFormat(Bitmap.CompressFormat.PNG)
+                .encodeFormat(Bitmap.CompressFormat.WEBP)
                 .format(DecodeFormat.DEFAULT);
 
         holder.username.setText(user.getUsername());
@@ -101,7 +101,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ImageViewHolde
                 .applyDefaultRequestOptions(requestOptions)
                 .load(user.getImageurl()).into(holder.image_profile);
 
-        if (user.getId().equals(firebaseUser.getUid())){
+        if (user.getId() != null && user.getId().equals(firebaseUser.getUid())) {
             holder.btn_follow.setVisibility(View.GONE);
         }
 
@@ -257,17 +257,20 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ImageViewHolde
 
     private void isFollowing(final String userid, final Button button){
 
-        final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        //final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
                 .child("Follow").child(firebaseUser.getUid()).child("following");
         reference.addValueEventListener(new ValueEventListener() {
+
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.child(userid).exists()) {
-                    button.setText("following");
-                } else {
-                    button.setText("follow");
+                if (userid != null) {
+                    if (dataSnapshot.child(userid).exists()) {
+                        button.setText("following");
+                    } else {
+                        button.setText("follow");
+                    }
                 }
             }
 

@@ -320,7 +320,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material/icons/materialicons/favorite/baseline_favorite_24.xml" />
+                                      <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material/icons/materialicons/refresh/baseline_refresh_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -330,8 +330,8 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="color" value="ff0062" />
-                            <entry key="outputName" value="ic_like_on_post_image" />
+                            <entry key="color" value="262626" />
+                            <entry key="outputName" value="ic_baseline_refresh_24" />
                             <entry key="sourceFile" value="C:\Users\arupp\AndroidStudioProjects\Fishta" />
                           </map>
                         </option>

@@ -16,6 +16,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -35,6 +38,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class HomeFragment extends Fragment {
 
@@ -63,12 +67,20 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
+        checkFollowing();
+
+        //AdMob
+        AdView mAdView = view.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
+
         recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
-        LinearLayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+        final LinearLayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         mLayoutManager.setReverseLayout(true);
         mLayoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(mLayoutManager);
+
         postList = new ArrayList<>();
         postAdapter = new PostAdapter(getContext(), postList);
         recyclerView.setAdapter(postAdapter);
@@ -129,9 +141,7 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        checkFollowing();
         return view;
-
 
     }
 
@@ -139,7 +149,7 @@ public class HomeFragment extends Fragment {
     private void checkFollowing() {
         followingList = new ArrayList<>();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Follow")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
                 .child("following");
 
         reference.addValueEventListener(new ValueEventListener() {
@@ -148,6 +158,7 @@ public class HomeFragment extends Fragment {
                 followingList.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     followingList.add(snapshot.getKey());
+                    System.out.println(followingList);
                 }
 
                 readPosts();
@@ -162,8 +173,8 @@ public class HomeFragment extends Fragment {
     }
 
     private void readPosts() {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
 
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -174,6 +185,7 @@ public class HomeFragment extends Fragment {
                         if (post != null) {
                             if (post.getPublisher().equals(id)) {
                                 postList.add(post);
+
                             }
                         }
 
@@ -199,7 +211,7 @@ public class HomeFragment extends Fragment {
                 long timecurrent = System.currentTimeMillis();
                 storyList.clear();
                 storyList.add(new Story("", 0, 0, "",
-                        FirebaseAuth.getInstance().getCurrentUser().getUid()));
+                        Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()));
                 for (String id : followingList) {
                     int countStory = 0;
                     Story story = null;
